@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#C1541E">
+<title>La Ruta de la Madre Selva — FRAYJABAR</title>
+<style>
+:root{
+  --quemado:#C1541E;
+  --arena:#EDD9A3;
+  --oxido:#7A351B;
+  --cielo:#BFD7E5;
+  --cielo2:#8FB7C9;
+  --oscuro:#3E2418;
+  --claro:#FFF7DF;
+  --verde:#6F7D48;
+  --rojo:#9D402B;
+  --sombra:0 12px 30px rgba(62,36,24,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overflow-x:hidden}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(237,217,163,.9),transparent 25%),
+    linear-gradient(160deg,var(--cielo) 0 28%,var(--arena) 28% 100%);
+  color:var(--oscuro);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.screen{display:none;width:min(1100px,100%);animation:enter .35s ease}
+.screen.active{display:block}
+@keyframes enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card{
+  background:rgba(255,247,223,.94);
+  border:3px solid var(--oxido);
+  border-radius:24px;
+  box-shadow:var(--sombra);
+  overflow:hidden;
+}
+.hero{
+  position:relative;
+  padding:34px 28px 26px;
+  background:linear-gradient(145deg,var(--quemado),var(--oxido));
+  color:var(--claro);
+}
+.hero:after{
+  content:"☁  ☼  🦜  🌿  💧  🐆";
+  display:block;
+  margin-top:16px;
+  letter-spacing:8px;
+  font-size:clamp(1rem,3vw,1.5rem);
+  opacity:.85;
+}
+.kicker{font-weight:800;text-transform:uppercase;letter-spacing:1.4px;font-size:.82rem;color:var(--arena)}
+h1,h2,h3{margin:0 0 12px;line-height:1.12}
+h1{font-size:clamp(2rem,6vw,4rem)}
+h2{font-size:clamp(1.5rem,4vw,2.3rem)}
+p{line-height:1.55}
+.content{padding:28px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{display:block;font-weight:800;margin-bottom:7px}
+input,select{
+  width:100%;min-height:50px;padding:12px 14px;border:2px solid var(--oxido);
+  border-radius:12px;background:#fffdf4;color:var(--oscuro);outline:none;
+}
+input:focus,select:focus{box-shadow:0 0 0 4px rgba(193,84,30,.2)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.btn{
+  min-height:48px;padding:12px 20px;border:2px solid var(--oxido);border-radius:13px;
+  background:var(--quemado);color:white;font-weight:900;box-shadow:0 5px 0 var(--oxido);
+  transition:.15s transform,.15s box-shadow;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--oxido)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--oxido)}
+.btn.secondary{background:var(--arena);color:var(--oscuro)}
+.btn.audio{background:var(--cielo);color:var(--oscuro)}
+.note{
+  padding:13px 15px;border-left:6px solid var(--quemado);background:rgba(237,217,163,.65);
+  border-radius:8px;margin:16px 0;
+}
+.lore{font-size:.9rem;font-weight:800;color:var(--arena)}
+.topbar{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;
+  padding:14px 18px;background:var(--oxido);color:white;
+}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:var(--arena);color:var(--oscuro);padding:7px 11px;border-radius:999px;font-weight:900}
+.game-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:0}
+.scene{padding:28px}
+.side{padding:24px;background:rgba(191,215,229,.45);border-left:3px solid var(--oxido)}
+.progress{height:12px;background:rgba(62,36,24,.15);border-radius:20px;overflow:hidden;margin:12px 0 20px}
+.progress span{display:block;height:100%;background:var(--quemado);width:0%;transition:width .3s}
+.illustration{
+  min-height:150px;border:3px dashed var(--oxido);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(180deg,var(--cielo),var(--arena));
+  font-size:clamp(2.3rem,8vw,5rem);letter-spacing:7px;margin-bottom:20px;
+}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:18px}
+.choice{
+  min-height:78px;text-align:left;padding:14px;border:3px solid var(--oxido);border-radius:14px;
+  background:#fff8e3;color:var(--oscuro);font-weight:800;line-height:1.35;
+  transition:.15s;
+}
+.choice:hover{background:var(--arena);transform:translateY(-2px)}
+.choice:disabled{cursor:default;opacity:.75}
+.feedback{
+  display:none;margin-top:18px;padding:17px;border-radius:15px;border:3px solid var(--oxido);
+  background:var(--arena);
+}
+.feedback.show{display:block}
+.feedback.good{background:#dbe2c0}
+.feedback.bad{background:#f0c7ae}
+.next{display:none;margin-top:14px}
+.next.show{display:inline-block}
+.learn-box{margin-top:18px;padding:15px;border-radius:14px;background:rgba(191,215,229,.55);border:2px solid var(--cielo2)}
+ul{padding-left:22px;line-height:1.55}
+.final-score{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;
+}
+.score-box{padding:18px;text-align:center;background:var(--arena);border:2px solid var(--oxido);border-radius:16px}
+.score-big{font-size:2.5rem;font-weight:1000;color:var(--quemado)}
+.small{font-size:.9rem;opacity:.85}
+.badge{
+  display:inline-block;padding:7px 12px;border-radius:999px;background:var(--quemado);color:#fff;font-weight:900
+}
+.error{color:#9D402B;font-weight:800;min-height:24px;margin-top:8px}
+footer{text-align:center;padding:14px;font-size:.82rem;background:var(--arena);border-top:2px solid var(--oxido)}
+@media(max-width:700px){
+  #app{padding:8px}
+  .card{border-radius:17px}
+  .hero{padding:25px 19px 20px}
+  .content,.scene,.side{padding:20px}
+  .form-grid,.game-grid,.choice-grid,.final-score{grid-template-columns:1fr}
+  .side{border-left:0;border-top:3px solid var(--oxido)}
+  .choice{min-height:70px}
+  .actions .btn{width:100%}
+  .topbar{align-items:flex-start}
+}
+@media(max-width:420px){
+  body{font-size:15px}
+  h1{font-size:2rem}
+  .illustration{min-height:125px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- 1. REGISTRO -->
+  <section id="register" class="screen active">
+    <div class="card">
+      <div class="hero">
+        <div class="kicker">I.E. Residencia Escolar Fray Javier de Barcelona · Informática</div>
+        <h1>La Ruta de la Madre Selva</h1>
+        <p>Una aventura educativa por el ciclo del agua en la selva amazónica.</p>
+        <div class="lore">FRAYJABAR · Mundo Andoque</div>
+      </div>
+      <div class="content">
+        <h2>Antes de comenzar</h2>
+        <p>Escribe tus datos para entrar a la aventura. Se guardarán <strong>solo durante esta sesión</strong> y no se usan almacenamiento del navegador.</p>
+        <div class="form-grid">
+          <div>
+            <label for="studentName">Nombre del estudiante *</label>
+            <input id="studentName" type="text" maxlength="60" autocomplete="off" placeholder="Escribe tu nombre">
+          </div>
+          <div>
+            <label for="studentGrade">Grado *</label>
+            <select id="studentGrade">
+              <option value="">Selecciona tu grado</option>
+              <option>1° primaria</option><option>2° primaria</option><option>3° primaria</option>
+              <option>4° primaria</option><option>5° primaria</option><option>6° primaria</option>
+            </select>
+          </div>
+        </div>
+        <div id="registerError" class="error" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn" id="registerBtn">Entrar a la aventura</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. INICIO -->
+  <section id="home" class="screen">
+    <div class="card">
+      <div class="hero">
+        <div class="kicker">Bienvenido/a, <span id="welcomeName"></span></div>
+        <h1>La Ruta de la Madre Selva</h1>
+        <p>Viaja por el Andoque, sigue el camino de una gota de agua y ayuda a una comunidad amazónica.</p>
+        <div class="lore">Este capítulo pertenece al multiverso educativo FRAYJABAR.</div>
+      </div>
+      <div class="content">
+        <h2>¿Cómo se juega?</h2>
+        <ul>
+          <li>Lee la historia y toma decisiones para avanzar.</li>
+          <li>Cada decisión enseña algo sobre <strong>evaporación, condensación, precipitación, escorrentía, infiltración y transpiración</strong>.</li>
+          <li>En el caso comunitario también decidirás cómo cuidar animales, agua, bosque y comunidad.</li>
+          <li>Las buenas decisiones suman puntos. Al final recibirás una nota de <strong>1.0 a 5.0</strong>.</li>
+        </ul>
+        <div class="note"><strong>Controles:</strong> toca o haz clic en las opciones. En computador también puedes usar las teclas <strong>1, 2, 3 y 4</strong>. En celular puedes tocar; también se acepta un gesto de deslizamiento.</div>
+        <div class="actions">
+          <button class="btn audio" id="audioBtn">🔊 Activar sonidos</button>
+          <button class="btn" id="playBtn">🌿 Jugar</button>
+        </div>
+      </div>
+      <footer>Andoque: tierras de arena caliente y horizontes ardientes. La Madre Selva guarda el siguiente camino.</footer>
+    </div>
+  </section>
+
+  <!-- 3 + 4. JUEGO / CASO -->
+  <section id="game" class="screen">
+    <div class="card">
+      <div class="topbar">
+        <strong id="chapterLabel">Aventura</strong>
+        <div class="stats">
+          <span class="pill">💧 Puntos: <span id="score">0</span></span>
+          <span class="pill">🌿 Decisión: <span id="decisionNo">1</span>/<span id="decisionTotal">8</span></span>
+        </div>
+      </div>
+      <div class="game-grid">
+        <main class="scene">
+          <div class="illustration" id="sceneArt" aria-hidden="true">🌞 ☁️ 🌧️ 🌳 🐒</div>
+          <h2 id="sceneTitle"></h2>
+          <p id="sceneText"></p>
+          <div class="learn-box" id="learnHint"></div>
+          <div class="progress"><span id="progressBar"></span></div>
+          <h3>¿Qué decides?</h3>
+          <div id="choices" class="choice-grid"></div>
+          <div id="feedback" class="feedback" aria-live="polite">
+            <strong id="feedbackTitle"></strong>
+            <p id="feedbackText"></p>
+            <button id="nextBtn" class="btn next">Continuar ➜</button>
+          </div>
+        </main>
+        <aside class="side">
+          <h3>🌎 Misión</h3>
+          <p id="missionText">Sigue el viaje del agua y protege la vida amazónica.</p>
+          <h3>💡 Pista</h3>
+          <p id="sideHint">Observa qué ocurre con el agua antes de decidir.</p>
+          <hr>
+          <p class="small"><strong>Sonido:</strong> <span id="soundStatus">apagado</span></p>
+          <button class="btn secondary" id="muteBtn">🔈 Sonido</button>
+        </aside>
+      </div>
+      <footer>FRAYJABAR · Andoque · Aventura educativa sobre el agua y la Madre Selva</footer>
+    </div>
+  </section>
+
+  <!-- 6. FINAL -->
+  <section id="final" class="screen">
+    <div class="card">
+      <div class="hero">
+        <div class="kicker">Fin de la aventura</div>
+        <h1>La Madre Selva te recuerda</h1>
+        <p>El agua viaja, transforma el paisaje y sostiene la vida.</p>
+      </div>
+      <div class="content">
+        <h2>Resultado de <span id="finalName"></span></h2>
+        <p>Grado: <strong id="finalGrade"></strong></p>
+        <div class="final-score">
+          <div class="score-box"><div class="small">Puntaje</div><div class="score-big" id="finalPoints">0</div><div>/ 80</div></div>
+          <div class="score-box"><div class="small">Nota institucional</div><div class="score-big" id="finalGradeScore">1.0</div><div>/ 5.0</div></div>
+          <div class="score-box"><div class="small">Desempeño</div><div class="score-big" id="performance">—</div></div>
+        </div>
+        <div class="note" id="finalMessage"></div>
+        <h3>🌧️ Lo que aprendiste</h3>
+        <ul>
+          <li>El <strong>Sol</strong> aporta energía y permite la <strong>evaporación</strong> del agua.</li>
+          <li>El vapor asciende, se enfría y se convierte en pequeñas gotas: <strong>condensación</strong>.</li>
+          <li>Cuando las gotas se juntan y caen, ocurre la <strong>precipitación</strong> (lluvia).</li>
+          <li>El agua puede correr por el suelo hacia ríos (<strong>escorrentía</strong>) o entrar en la tierra (<strong>infiltración</strong>).</li>
+          <li>Las plantas devuelven agua al aire mediante la <strong>transpiración</strong>.</li>
+          <li>Cuidar el bosque ayuda a proteger el agua, los animales y la comunidad.</li>
+        </ul>
+        <div class="note"><strong>FRAYJABAR · Andoque:</strong> este viaje termina aquí, pero otros mundos del multiverso educativo pueden guardar nuevas misiones.</div>
+        <div class="actions">
+          <button class="btn" id="restartBtn">🔄 Jugar de nuevo</button>
+          <button class="btn audio" id="finalAudioBtn">🔊 Sonido</button>
+        </div>
+      </div>
+      <footer>I.E. Residencia Escolar Fray Javier de Barcelona · Área: informática</footer>
+    </div>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   DATOS DE SESIÓN: solo variables JS. NO localStorage/sessionStorage.
+   ========================================================= */
+let studentName = "";
+let studentGrade = "";
+let score = 0;
+let current = 0;
+let answered = false;
+let audioEnabled = false;
+
+/* =========================================================
+   AVENTURA
+   Las 4 primeras decisiones enseñan el ciclo del agua.
+   Las 4 siguientes forman el caso práctico comunitario.
+   ========================================================= */
+const scenes = [
+  {
+    chapter:"Capítulo 1 · El viaje de la gota",
+    art:"☀️ 💧 🌿 🐒",
+    title:"1. El Sol despierta el río",
+    text:"Caminas cerca de un río amazónico. El Sol calienta la superficie y una gotita empieza a subir como vapor. ¿Qué proceso está ocurriendo?",
+    hint:"Piensa: el calor puede hacer que el agua líquida pase al estado gaseoso.",
+    mission:"Acompaña a la gota desde el río hasta las nubes.",
+    choices:[
+      ["Evaporación","Correcta: el calor del Sol hace que parte del agua líquida se convierta en vapor y suba al aire.",10],
+      ["Precipitación","La lluvia es precipitación. Aquí la gota está haciendo lo contrario: está pasando al aire como vapor.",0],
+      ["Infiltración","La infiltración ocurre cuando el agua entra en el suelo. La gota de esta escena está subiendo.",0],
+      ["Escorrentía","La escorrentía ocurre cuando el agua corre sobre la superficie hacia ríos y otros lugares.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 1 · El viaje de la gota",
+    art:"💨 ☁️ 🌳 🦜",
+    title:"2. Una nube se forma",
+    text:"El vapor sube a una zona más fría del cielo. Allí se reúne en diminutas gotas y aparece una nube sobre la selva. ¿Cómo se llama este proceso?",
+    hint:"El vapor de agua se enfría y vuelve a formar pequeñas gotas líquidas.",
+    mission:"Ayuda a la gota a formar una nube sin perder el camino.",
+    choices:[
+      ["Escorrentía","No. Eso describe agua que corre por la superficie del terreno.",0],
+      ["Condensación","Correcta: al enfriarse, el vapor se transforma en pequeñas gotas de agua y forma nubes.",10],
+      ["Evaporación","Eso ocurre cuando el agua recibe calor y pasa a vapor.",0],
+      ["Infiltración","Eso sucede cuando el agua entra en el suelo.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 1 · El viaje de la gota",
+    art:"☁️ 🌧️ 🐸 🌴",
+    title:"3. La lluvia llega",
+    text:"La nube está llena de gotitas. Se hacen más grandes y pesadas. De pronto, comienzan a caer sobre las hojas y el suelo. ¿Qué ocurre?",
+    hint:"Cuando el agua cae desde las nubes hacia la superficie, tiene un nombre especial.",
+    mission:"Haz que la lluvia alimente la vida de la selva.",
+    choices:[
+      ["Transpiración","Es el agua que las plantas liberan al aire, no la lluvia que cae.",0],
+      ["Infiltración","Puede ocurrir después, cuando parte de la lluvia entra en el suelo.",0],
+      ["Precipitación","Correcta: la lluvia es una forma de precipitación y devuelve agua a la superficie.",10],
+      ["Condensación","La condensación ayudó a formar la nube antes de que lloviera.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 1 · El viaje de la gota",
+    art:"🌧️ 🌱 💧 🏞️",
+    title:"4. Dos caminos en la tierra",
+    text:"Después de la lluvia, una parte del agua corre por la superficie hacia una quebrada, mientras otra parte entra entre los poros del suelo. ¿Qué dos procesos reconoces?",
+    hint:"Una ruta corre por encima; la otra entra en la tierra.",
+    mission:"Sigue dos gotas: una por la superficie y otra bajo el suelo.",
+    choices:[
+      ["Escorrentía e infiltración","Correcta: el agua que corre por la superficie es escorrentía y la que entra en el suelo es infiltración.",10],
+      ["Evaporación y precipitación","Esos procesos pertenecen a otras etapas del viaje del agua.",0],
+      ["Condensación y transpiración","Aquí estamos observando agua en el suelo, no vapor formando nubes ni plantas liberando agua.",0],
+      ["Solo evaporación","No. Después de la lluvia el agua puede correr o entrar en el suelo.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 2 · La comunidad amazónica",
+    art:"🌳 🐆 🛶 💧",
+    title:"5. Una decisión por los animales",
+    text:"Vives en una comunidad de la Amazonía. Encuentras una zona donde los animales buscan agua. Alguien propone dejar residuos cerca del río porque 'la lluvia se los llevará'. ¿Qué haces?",
+    hint:"El agua conecta lugares. Lo que dejamos en un sitio puede contaminar otros lugares.",
+    mission:"Proteger la naturaleza también es proteger el ciclo del agua.",
+    choices:[
+      ["Dejar los residuos junto al río","Incorrecta. La lluvia puede llevar la basura al agua y afectar a peces, animales y personas.",0],
+      ["Recogerlos y llevarlos a un lugar adecuado","Correcta: evitar residuos cerca del agua ayuda a mantener limpio el hábitat y protege a la comunidad.",10],
+      ["Lanzarlos al bosque","Incorrecta. La basura puede dañar animales y suelo, y también llegar al agua.",0],
+      ["Quemarlos junto al río","Incorrecta. Puede producir humo y dejar residuos; además, el fuego cerca de vegetación puede ser peligroso.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 2 · La comunidad amazónica",
+    art:"🌿 🌳 💧 🦥",
+    title:"6. Cuidar el bosque",
+    text:"La comunidad necesita madera para una construcción. Hay árboles jóvenes y una zona de bosque que protege una quebrada. ¿Cuál es la mejor decisión?",
+    hint:"Los árboles ayudan a conservar el suelo y participan en el movimiento del agua mediante la transpiración.",
+    mission:"Usa los recursos sin destruir las zonas que protegen el agua.",
+    choices:[
+      ["Cortar todos los árboles de la quebrada","Incorrecta. Quitar la vegetación puede dejar el suelo más expuesto y afectar el agua y los hábitats.",0],
+      ["Usar solo árboles necesarios y proteger la vegetación cercana al agua","Correcta: un uso responsable permite satisfacer necesidades sin destruir zonas importantes para el agua y la vida.",10],
+      ["Talar primero los árboles más grandes sin plan","Incorrecta. La comunidad debe pensar en el cuidado del bosque y en el futuro.",0],
+      ["Tirar ramas al río para despejar el camino","Incorrecta. Los residuos pueden alterar el agua y perjudicar a los seres vivos.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 2 · La comunidad amazónica",
+    art:"🌧️ 🏠 🤝 🌱",
+    title:"7. Ayudar después de una lluvia fuerte",
+    text:"Ha llovido mucho y el agua está entrando por una zona baja de la comunidad. Hay personas que quieren tapar una cuneta con basura para que 'el agua desaparezca'. ¿Qué haces?",
+    hint:"El agua necesita caminos seguros. La basura puede bloquearlos.",
+    mission:"Ayuda a tu comunidad sin contaminar ni empeorar el problema.",
+    choices:[
+      ["Tapar la cuneta con basura","Incorrecta. Bloquear el paso puede aumentar el encharcamiento y llevar residuos al agua.",0],
+      ["Abrir y limpiar de forma segura el canal, y pedir ayuda adulta si es necesario","Correcta: mantener los caminos del agua despejados reduce riesgos y evita contaminar.",10],
+      ["Empujar el agua hacia la zona de animales","Incorrecta. No debemos trasladar el problema a otro ser vivo.",0],
+      ["No avisar a nadie","Incorrecta. Cuando hay riesgo, es importante informar y trabajar juntos.",0]
+    ]
+  },
+  {
+    chapter:"Capítulo 2 · La comunidad amazónica",
+    art:"🌳 💨 💧 🦜",
+    title:"8. El secreto de las plantas",
+    text:"En un claro de la selva observas que las plantas toman agua por sus raíces y después liberan parte de ella al aire por sus hojas. ¿Cómo se llama este proceso?",
+    hint:"Es una parte del ciclo del agua relacionada directamente con las plantas.",
+    mission:"Completa el ciclo comprendiendo cómo el bosque devuelve agua al aire.",
+    choices:[
+      ["Transpiración","Correcta: las plantas liberan vapor de agua principalmente por sus hojas. Así participan en el ciclo del agua.",10],
+      ["Precipitación","La precipitación es el agua que cae de las nubes.",0],
+      ["Escorrentía","La escorrentía es agua que corre sobre la superficie.",0],
+      ["Condensación","La condensación ocurre cuando el vapor se enfría y forma gotas.",0]
+    ]
+  }
+];
+
+/* =========================================================
+   REFERENCIAS DOM
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const screens = {
+  register:$("register"), home:$("home"), game:$("game"), final:$("final")
+};
+
+function showScreen(name){
+  Object.values(screens).forEach(s=>s.classList.remove("active"));
+  screens[name].classList.add("active");
+  window.scrollTo(0,0);
+}
+
+/* =========================================================
+   AUDIO: Web Audio API, sin archivos externos.
+   ========================================================= */
+let audioCtx = null;
+let master = null;
+let ambientTimer = null;
+
+function initAudio(){
+  if(audioCtx) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return;
+  audioCtx = new AC();
+  master = audioCtx.createGain();
+  master.gain.value = .12;
+  master.connect(audioCtx.destination);
+}
+function tone(freq,dur=.15,type="sine",vol=.05){
+  if(!audioEnabled || !audioCtx) return;
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(0.0001,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(vol,audioCtx.currentTime+.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+  o.connect(g);g.connect(master);o.start();o.stop(audioCtx.currentTime+dur+.02);
+}
+function noise(dur=.5,vol=.03,filterFreq=1600){
+  if(!audioEnabled || !audioCtx) return;
+  const len=Math.floor(audioCtx.sampleRate*dur);
+  const buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate);
+  const data=buf.getChannelData(0);
+  for(let i=0;i<len;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/len,.25);
+  const src=audioCtx.createBufferSource();
+  const filter=audioCtx.createBiquadFilter(),g=audioCtx.createGain();
+  filter.type="lowpass";filter.frequency.value=filterFreq;
+  g.gain.value=vol;
+  src.buffer=buf;src.connect(filter);filter.connect(g);g.connect(master);src.start();
+}
+function startAmbient(){
+  if(!audioEnabled || ambientTimer) return;
+  const chirp=()=>{
+    if(!audioEnabled)return;
+    tone(950,.09,"sine",.025); setTimeout(()=>tone(1250,.11,"sine",.02),90);
+    setTimeout(()=>tone(800,.08,"sine",.018),190);
+    ambientTimer=setTimeout(chirp,Math.random()*5000+4500);
+  };
+  chirp();
+}
+function stopAmbient(){if(ambientTimer){clearTimeout(ambientTimer);ambientTimer=null}}
+function playRain(){ noise(.7,.018,1100); setTimeout(()=>noise(.5,.012,900),250); }
+function playRiver(){ noise(.9,.012,800); }
+function playChoice(ok){ if(ok){tone(523,.12,"sine",.05);setTimeout(()=>tone(659,.16,"sine",.045),120)} else {tone(180,.22,"triangle",.04)} }
+function toggleAudio(){
+  initAudio();
+  if(!audioCtx) return;
+  audioEnabled=!audioEnabled;
+  if(audioEnabled){
+    audioCtx.resume();
+    startAmbient(); tone(392,.12,"sine",.04); playRain();
+    $("soundStatus").textContent="encendido";
+  }else{
+    stopAmbient(); $("soundStatus").textContent="apagado";
+  }
+  $("audioBtn").textContent=audioEnabled?"🔊 Sonidos activados":"🔊 Activar sonidos";
+  $("muteBtn").textContent=audioEnabled?"🔇 Silenciar":"🔈 Sonido";
+  $("finalAudioBtn").textContent=audioEnabled?"🔇 Silenciar":"🔊 Sonido";
+}
+
+/* =========================================================
+   REGISTRO
+   ========================================================= */
+$("registerBtn").addEventListener("click",()=>{
+  const name=$("studentName").value.trim();
+  const grade=$("studentGrade").value;
+  if(!name || !grade){
+    $("registerError").textContent="Completa tu nombre y selecciona tu grado para continuar.";
+    return;
+  }
+  studentName=name; studentGrade=grade;
+  $("welcomeName").textContent=studentName;
+  $("registerError").textContent="";
+  showScreen("home");
+});
+$("studentName").addEventListener("keydown",e=>{if(e.key==="Enter")$("registerBtn").click()});
+$("studentGrade").addEventListener("keydown",e=>{if(e.key==="Enter")$("registerBtn").click()});
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+$("audioBtn").addEventListener("click",toggleAudio);
+$("muteBtn").addEventListener("click",toggleAudio);
+$("finalAudioBtn").addEventListener("click",toggleAudio);
+$("playBtn").addEventListener("click",()=>{
+  score=0;current=0;answered=false;
+  showScreen("game"); renderScene();
+  if(audioEnabled){playRiver();startAmbient()}
+});
+
+/* =========================================================
+   MOTOR DEL JUEGO
+   ========================================================= */
+function renderScene(){
+  const s=scenes[current];
+  $("chapterLabel").textContent=s.chapter;
+  $("sceneArt").textContent=s.art;
+  $("sceneTitle").textContent=s.title;
+  $("sceneText").textContent=s.text;
+  $("learnHint").innerHTML="<strong>💡 Pista educativa:</strong> "+s.hint;
+  $("missionText").textContent=s.mission;
+  $("decisionNo").textContent=current+1;
+  $("decisionTotal").textContent=scenes.length;
+  $("progressBar").style.width=((current)/scenes.length*100)+"%";
+  $("choices").innerHTML="";
+  $("feedback").className="feedback";
+  $("nextBtn").className="btn next";
+  answered=false;
+  s.choices.forEach((c,i)=>{
+    const b=document.createElement("button");
+    b.className="choice";
+    b.innerHTML="<strong>"+(i+1)+".</strong> "+c[0];
+    b.addEventListener("click",()=>choose(i));
+    $("choices").appendChild(b);
+  });
+  if(current===2 || current===6) playRain();
+  if(current===0 || current===7) playRiver();
+}
+function choose(index){
+  if(answered)return;
+  answered=true;
+  const s=scenes[current], c=s.choices[index], ok=c[2]>0;
+  score+=c[2];
+  document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+  $("score").textContent=score;
+  $("feedback").className="feedback show "+(ok?"good":"bad");
+  $("feedbackTitle").textContent=ok?"🌿 ¡Buena decisión! +10 puntos":"🌱 Todavía puedes aprender de esta decisión.";
+  $("feedbackText").textContent=c[1];
+  $("nextBtn").className="btn next show";
+  $("nextBtn").textContent=current===scenes.length-1?"Ver mi resultado ➜":"Continuar ➜";
+  $("progressBar").style.width=((current+1)/scenes.length*100)+"%";
+  playChoice(ok);
+}
+$("nextBtn").addEventListener("click",()=>{
+  current++;
+  if(current>=scenes.length){finishGame();return}
+  renderScene();
+});
+document.addEventListener("keydown",e=>{
+  if(!screens.game.classList.contains("active"))return;
+  if(!answered && ["1","2","3","4"].includes(e.key)){
+    choose(Number(e.key)-1);
+  }else if(answered && (e.key==="Enter" || e.key===" ")){
+    e.preventDefault();$("nextBtn").click();
+  }
+});
+
+/* Swipe: misma lógica, pensado para celular */
+let touchStartX=0,touchStartY=0;
+$("game").addEventListener("touchstart",e=>{
+  const t=e.changedTouches[0];touchStartX=t.clientX;touchStartY=t.clientY;
+},{passive:true});
+$("game").addEventListener("touchend",e=>{
+  if(!screens.game.classList.contains("active") || answered)return;
+  const t=e.changedTouches[0],dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;
+  if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)){
+    const delta=dx<0?1:-1;
+    const btns=[...document.querySelectorAll(".choice")];
+    const first=btns.findIndex(b=>!b.disabled);
+    if(first>=0){
+      const idx=Math.max(0,Math.min(3,first+delta));
+      btns[idx].focus();
+    }
+  }
+},{passive:true});
+
+/* =========================================================
+   CALIFICACIÓN 1.0 - 5.0
+   0-80 puntos. 3.0 es aprobatorio.
+   ========================================================= */
+function calculateGrade(points){
+  // Escala lineal con mínimo 1.0 y máximo 5.0:
+  // 0 -> 1.0, 80 -> 5.0. 40 puntos -> 3.0.
+  return Math.max(1,Math.min(5,1+(points/80)*4));
+}
+function performance(g){
+  if(g>=4.6)return"Excelente";
+  if(g>=4.0)return"Alto";
+  if(g>=3.0)return"Básico / Aprobado";
+  return"Bajo / En proceso";
+}
+function finishGame(){
+  const grade=calculateGrade(score);
+  $("finalName").textContent=studentName;
+  $("finalGrade").textContent=studentGrade;
+  $("finalPoints").textContent=score;
+  $("finalGradeScore").textContent=grade.toFixed(1);
+  $("performance").textContent=performance(grade);
+  $("finalMessage").innerHTML=grade>=3
+    ? "<strong>🎉 ¡Misión cumplida!</strong> Comprendiste cómo se mueve el agua y tomaste decisiones responsables para la comunidad y la naturaleza."
+    : "<strong>🌱 Sigue explorando.</strong> La Madre Selva todavía tiene mucho que enseñarte. Revisa las etapas del ciclo del agua y vuelve a intentarlo.";
+  showScreen("final");
+  if(audioEnabled){tone(523,.14,"sine",.04);setTimeout(()=>tone(659,.14,"sine",.04),130);setTimeout(()=>tone(784,.22,"sine",.04),270)}
+}
+$("restartBtn").addEventListener("click",()=>{
+  score=0;current=0;answered=false;
+  $("score").textContent="0";
+  showScreen("home");
+});
+
+/* Evita zoom accidental por doble toque en botones en algunos navegadores */
+document.addEventListener("dblclick",e=>{
+  if(e.target.closest("button"))e.preventDefault();
+});
+</script>
+</body>
+</html>
